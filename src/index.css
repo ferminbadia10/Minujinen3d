@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+/* 
+ * Robust pointer-events pass-through for the HUD overlay container.
+ * Completely invisible to pointer/touch events, letting 100% of gestures
+ * through to the underlying WebGL canvas, while strictly preserving
+ * pointer-events: auto on explicitly designated interactive child elements.
+ */
+.fixed.inset-0.pointer-events-none.z-30 {
+  pointer-events: none !important;
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none !important;
+  background-color: transparent !important;
+}
+
+/* Ensure only interactive descendants (buttons, inputs, cards, dock) capture events */
+.fixed.inset-0.pointer-events-none.z-30 .pointer-events-auto {
+  pointer-events: auto !important;
+  touch-action: auto !important;
+}

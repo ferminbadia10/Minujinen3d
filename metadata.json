@@ -1,0 +1,6 @@
+{
+  "name": "Marta Minujín: Universo de Energía Multidireccional & AR",
+  "description": "Experiencia web inmersiva 3D con Three.js impulsada por sensores físicos: túnel de energía multidireccional, reactividad sonora en tiempo real y realidad aumentada (AR) con cámara en vivo.",
+  "requestFramePermissions": ["camera", "microphone", "accelerometer", "gyroscope"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
