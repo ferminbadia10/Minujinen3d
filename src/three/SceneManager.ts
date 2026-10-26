@@ -49,7 +49,9 @@ export class SceneManager {
 
   // Gallery Architecture Elements
   private floorMesh: THREE.Mesh | null = null;
+  private floorMeshTopLayer: THREE.Mesh | null = null;
   private cloudFloorTexture: THREE.Texture | null = null;
+  private cloudFloorTexture2: THREE.Texture | null = null;
   private ceilingMesh: THREE.Mesh | null = null;
   private ceilingSoftArtGroup: THREE.Group | null = null;
   private mattressWallGroup: THREE.Group | null = null;
@@ -184,22 +186,25 @@ export class SceneManager {
    * Polished resin floor, perimeter mattress installation wall, and architectural cove ceiling
    */
   private buildGalleryRoom() {
-    // 1. Ethereal Cloud Sea Floor via PNG Texture (Walking on Clouds)
+    // 1. Ethereal Cloud Sea Floor via PNG Texture (Dual-Layer Slow Motion Cloud Sea)
     const floorRadius = 15.6;
     const floorGeo = new THREE.CircleGeometry(floorRadius, 96);
-    this.cloudFloorTexture = new THREE.TextureLoader().load(cloudFloorPngUrl);
+    const textureLoader = new THREE.TextureLoader();
+
+    // Primary cloud base layer
+    this.cloudFloorTexture = textureLoader.load(cloudFloorPngUrl);
     this.cloudFloorTexture.wrapS = THREE.RepeatWrapping;
     this.cloudFloorTexture.wrapT = THREE.RepeatWrapping;
-    this.cloudFloorTexture.repeat.set(5, 5);
+    this.cloudFloorTexture.repeat.set(4, 4);
     this.cloudFloorTexture.colorSpace = THREE.SRGBColorSpace;
 
     const floorMat = new THREE.MeshStandardMaterial({
       map: this.cloudFloorTexture,
-      roughness: 0.25,
+      roughness: 0.35,
       metalness: 0.05,
-      emissive: new THREE.Color(0x301e38), // Soft Minujín lavender/rose ethereal undertone
+      emissive: new THREE.Color(0x2e1938), // Soft Minujín lavender/rose ethereal undertone
       emissiveMap: this.cloudFloorTexture,
-      emissiveIntensity: 0.38,
+      emissiveIntensity: 0.42,
     });
 
     this.floorMesh = new THREE.Mesh(floorGeo, floorMat);
@@ -207,6 +212,30 @@ export class SceneManager {
     this.floorMesh.position.y = 0;
     this.floorMesh.receiveShadow = true;
     this.scene.add(this.floorMesh);
+
+    // Secondary translucent cloud layer (counter-drifting for rich, organic parallax billowing)
+    this.cloudFloorTexture2 = textureLoader.load(cloudFloorPngUrl);
+    this.cloudFloorTexture2.wrapS = THREE.RepeatWrapping;
+    this.cloudFloorTexture2.wrapT = THREE.RepeatWrapping;
+    this.cloudFloorTexture2.repeat.set(3, 3);
+    this.cloudFloorTexture2.colorSpace = THREE.SRGBColorSpace;
+
+    const topLayerMat = new THREE.MeshStandardMaterial({
+      map: this.cloudFloorTexture2,
+      transparent: true,
+      opacity: 0.48,
+      roughness: 0.3,
+      metalness: 0.02,
+      emissive: new THREE.Color(0x381f44),
+      emissiveMap: this.cloudFloorTexture2,
+      emissiveIntensity: 0.46,
+      depthWrite: false,
+    });
+
+    this.floorMeshTopLayer = new THREE.Mesh(floorGeo, topLayerMat);
+    this.floorMeshTopLayer.rotation.x = -Math.PI / 2;
+    this.floorMeshTopLayer.position.y = 0.012; // hover 1.2cm above base floor
+    this.scene.add(this.floorMeshTopLayer);
 
     // 2. Sculptural Vaulted Ceiling with Marta Minujín Pop-Art Aesthetic
     const innerRadius = 2.4;
@@ -951,10 +980,25 @@ export class SceneManager {
       }
     });
 
-    // 3. Subtle Ethereal Cloud Drift beneath the visitor's feet
+    // 3. Dynamic UV offset displacement creating the slow lateral sky movement beneath the 3D pavilion
+    const lateralSpeed = 0.018; // Slow, serene lateral drift across the pavilion floor
+    const longitudinalSpeed = 0.005; // Subtle forward-backward motion for natural organic flow
+
     if (this.cloudFloorTexture) {
-      this.cloudFloorTexture.offset.x += 0.0006 * delta;
-      this.cloudFloorTexture.offset.y += 0.0004 * delta;
+      // Direct dynamic UV coordinates update on the primary cloud texture
+      this.cloudFloorTexture.offset.x = (time * lateralSpeed) % 1.0;
+      this.cloudFloorTexture.offset.y = (time * longitudinalSpeed + Math.sin(time * 0.25) * 0.006) % 1.0;
+    }
+
+    if (this.cloudFloorTexture2) {
+      // Counter-lateral dynamic UV offset on the translucent layer for organic atmospheric depth
+      this.cloudFloorTexture2.offset.x = -(time * 0.012) % 1.0;
+      this.cloudFloorTexture2.offset.y = (time * 0.008 + Math.cos(time * 0.2) * 0.005) % 1.0;
+    }
+
+    if (this.floorMeshTopLayer) {
+      // Gentle micro-elevation wave (hovering cloud sensation)
+      this.floorMeshTopLayer.position.y = 0.012 + Math.sin(time * 0.6) * 0.006;
     }
 
     // 3. Update Floating Ribbons
@@ -1084,9 +1128,22 @@ export class SceneManager {
       }
       this.floorMesh = null;
     }
+    if (this.floorMeshTopLayer) {
+      this.floorMeshTopLayer.geometry.dispose();
+      if (Array.isArray(this.floorMeshTopLayer.material)) {
+        this.floorMeshTopLayer.material.forEach((m) => m.dispose());
+      } else {
+        this.floorMeshTopLayer.material.dispose();
+      }
+      this.floorMeshTopLayer = null;
+    }
     if (this.cloudFloorTexture) {
       this.cloudFloorTexture.dispose();
       this.cloudFloorTexture = null;
+    }
+    if (this.cloudFloorTexture2) {
+      this.cloudFloorTexture2.dispose();
+      this.cloudFloorTexture2 = null;
     }
 
     this.scene.clear();

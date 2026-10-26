@@ -308,7 +308,7 @@ export default function App() {
       {/* Layer 1: Gallery HUD & Curatorial Overlays - pointer-events-none ensures transparent canvas pass-through */}
       {appState.isInitialized && (
         <div
-          className="fixed inset-0 pointer-events-none z-30 overflow-hidden select-none touch-none"
+          className="absolute top-0 left-0 w-full h-full pointer-events-none z-30 overflow-hidden select-none touch-none"
           style={{ pointerEvents: 'none' }}
         >
           {/* Top Exhibition Bar with Live Sensor Telemetry */}

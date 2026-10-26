@@ -98,11 +98,12 @@ La sala expone las 6 obras y registros clave del catálogo:
    - Construir la sala contemporánea (iluminación de focos cálidos de galería, muro perimetral de colchones acolchados, techo abovedado Minujín).
    - Ensamblar los cuadros flotantes con marcos de galería y lienzos texturizados basados fielmente en las obras de Minujín.
    - Instanciar la escultura cinética 3D de *"ARTE ARTE ARTE"*.
-2. **Reemplazo del Suelo por Textura PNG de Mar de Nubes**:
+2. **Suelo Animado de Mar de Nubes PNG con Parallax Lento**:
    - Se removieron por completo todas las geometrías y partículas 3D de nubes que generaban oclusión visual.
-   - Se implementó un suelo plano circular en `y = 0` con una textura PNG continua de alta resolución que representa un mar de nubes blancas y suaves con matices pastel y una sutil deriva animada de coordenadas UV (`offset`).
-   - Al ser un plano horizontal en el nivel del suelo (`y = 0`) sin volumen vertical, garantiza visibilidad 100% nítida e ininterrumpida de las 6 obras, sus marcos y el monumento cinético 3D.
-   - Se eliminaron todos los carteles negros en el espacio 3D.
+   - Se implementó un sistema de doble capa horizontal en el suelo (`y = 0` y `y = 0.012`) utilizando la textura PNG de alta resolución de nubes suaves.
+   - Ambas capas se desplazan continuamente a velocidades y ángulos opuestos (`(0.012, 0.007)` y `(-0.008, 0.011)` UV/s), generando un efecto visual orgánico de olas y nubes ondulantes en cámara lenta sin saltos bruscos.
+   - La capa superior translúcida posee una sutil ondulación vertical milimétrica (respiración suave de ±6mm), creando la sensación inmersiva de estar flotando o suspendido sobre un mar de nubes vivas.
+   - Al ser planos horizontales en el suelo, garantizan 100% de visibilidad despejada hacia las 6 obras y el monumento tridimensional.
 3. **Sistema de Enfoque Curatorial & Raycasting**:
    - Implementar el desplazamiento cinemático suave hacia la obra seleccionada y retorno a la vista panorámica general.
 4. **Verificación & Optimización**:
